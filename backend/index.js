@@ -1,14 +1,4 @@
-import http from "http";
-import { WebSocketServer } from "ws";
-import express from "express";
-import { v4 as uuidv4 } from "uuid";
-const app = express();
-const port = 3000;
-const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
-//all connections and user
-const connections = {};
-const users = {};
+import { app, server } from "./Socket.js";
 const auctionItem = [
   {
     id: 1,
@@ -32,27 +22,9 @@ const auctionItem = [
     auctionEndTime: "2026-02-01T12:00:00Z",
   },
 ];
-//websocket connection
-wss.on("connection", (connection, request) => {
-  const url = new URL(request.url, `http://${request.headers.host}`);
-  const name = url.searchParams.get("userName");
-
-  const uuid = uuidv4();
-  connections[uuid] = connection;
-  users[uuid] = {
-    userName: name,
-    bid_item: "",
-    placed_bid: "",
-    end_time: "",
-  };
-  console.log("all users", users);
-
-  //   console.log("all connection", connections);
-});
-
 app.get("/", (req, res) => {
   return res.json({ message: "welcome", items: auctionItem });
 });
-server.listen(port, () => {
+server.listen(3000, () => {
   console.log("server is running");
 });
