@@ -1,4 +1,19 @@
+import { configDotenv } from "dotenv";
 import { app, server } from "./Socket.js";
+import { auctionModel, connectDb } from "./db.js";
+import { seedAuctions } from "./seed.js";
+configDotenv();
+
+app.get("/", async (req, res) => {
+  const aucItem = await auctionModel.find({});
+
+  return res.json({ message: "welcome", items: aucItem });
+});
+server.listen(3000, () => {
+  connectDb(process.env.MONGO_URL);
+  seedAuctions();
+  console.log("server is running");
+});
 const auctionItem = [
   {
     id: 1,
@@ -22,9 +37,3 @@ const auctionItem = [
     auctionEndTime: "2026-02-01T12:00:00Z",
   },
 ];
-app.get("/", (req, res) => {
-  return res.json({ message: "welcome", items: auctionItem });
-});
-server.listen(3000, () => {
-  console.log("server is running");
-});
