@@ -23,19 +23,32 @@ const Broadcast = async (connections, uid, payload) => {
     }
   });
 };
+const d_broadcast = async (connections, mess) => {
+  const cuser = Object.keys(connections);
+  cuser.forEach((id) => {
+    connections[id].send(JSON.stringify(mess));
+  });
+};
 //websocket connection
 wss.on("connection", async (connection, request) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
+  console.log(url);
+
   const name = url.searchParams.get("userName");
   // const all_item = await auctionModel.find({});
   // console.log("auc items", all_item);
   const uuid = uuidv4();
   connections[uuid] = connection;
   users[uuid] = name;
+
   // console.log("----------", users);
   connection.on("message", async (data) => {
     const f_data = JSON.parse(data.toString());
     // console.log("data over socket", f_data);
+    // d_broadcast(connections, f_data);
+    if (data) {
+      console.log("something came", JSON.parse(data.toString()));
+    }
 
     const { id: itemId, bid_amt } = f_data;
     const previtem = await auctionModel.findOne({ id: itemId });
@@ -68,7 +81,10 @@ wss.on("connection", async (connection, request) => {
         JSON.stringify({
           type: "BID_ACCEPTED",
           message: "highest bidder at the moment",
+          newamt: result.currentBid,
           owner_token: 1,
+          highestBidder: result.highestBidder,
+          id: result.id,
         }),
       );
     }
@@ -87,12 +103,10 @@ wss.on("connection", async (connection, request) => {
       // console.log("----", userid);
       const payload = JSON.stringify({
         type: "Out_Bid",
-        message: "No longer highest bidder",
+        message: ` No longer highest bidder for ${result.itemName} `,
         owner_token: 0,
       });
       connections[userid].send(payload);
-      // console.log("print", con_id);
-      // console.log("prev owner", prevowner);
     }
   });
 });

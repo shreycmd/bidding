@@ -18,5 +18,6 @@ const schema_auction = new mongoose.Schema({
   currentBid: Number,
   auctionEndTime: Date,
   highestBidder: String,
+  imageUrl: String,
 });
 export const auctionModel = mongoose.model("Auction", schema_auction);

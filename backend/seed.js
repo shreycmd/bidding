@@ -12,6 +12,7 @@ export async function seedAuctions() {
     {
       id: 1,
       itemName: "Vintage Camera",
+
       startingPrice: 5000,
       currentBid: 5000,
       auctionEndTime: new Date(now + 10 * 60 * 1000),
@@ -19,9 +20,26 @@ export async function seedAuctions() {
     {
       id: 2,
       itemName: "Gaming Laptop",
+
       startingPrice: 45000,
       currentBid: 45000,
       auctionEndTime: new Date(now + 15 * 60 * 1000),
+    },
+    {
+      id: 3,
+      itemName: "Smart Watch",
+
+      startingPrice: 3000,
+      currentBid: 3000,
+      auctionEndTime: new Date(now + 5 * 60 * 1000),
+    },
+    {
+      id: 4,
+      itemName: "Wireless Headphones",
+
+      startingPrice: 8000,
+      currentBid: 8000,
+      auctionEndTime: new Date(now + 20 * 60 * 1000),
     },
   ]);
 

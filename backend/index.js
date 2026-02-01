@@ -2,9 +2,17 @@ import { configDotenv } from "dotenv";
 import { app, server } from "./Socket.js";
 import { auctionModel, connectDb } from "./db.js";
 import { seedAuctions } from "./seed.js";
+import cors from "cors";
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
+
 configDotenv();
 
-app.get("/", async (req, res) => {
+app.get("/biddingarea/:userName", async (req, res) => {
   const aucItem = await auctionModel.find({});
 
   return res.json({ message: "welcome", items: aucItem });
