@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [userName, setuserName] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
+  const getAll = async () => {
+    await fetch(`${API_URL}/`);
+
+    return;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    await getAll();
     if (!userName.trim()) return;
     navigate(`/biddingarea/${userName}`);
   };
