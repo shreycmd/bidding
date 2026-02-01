@@ -58,7 +58,7 @@ wss.on("connection", async (connection, request) => {
       {
         id: itemId,
         currentBid: { $lt: bid_amt },
-        auctionEndTime: { $gt: new Date() }, // server UTC
+        auctionEndTime: { $gt: new Date() },
       },
       {
         $set: {
@@ -108,6 +108,10 @@ wss.on("connection", async (connection, request) => {
       });
       connections[userid].send(payload);
     }
+  });
+  connection.on("close", () => {
+    delete connections[uuid];
+    delete users[uuid];
   });
 });
 
