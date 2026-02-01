@@ -6,10 +6,7 @@ import cors from "cors";
 app.use(cors());
 
 configDotenv();
-app.get("/", (req, res) => {
-  seedAuctions();
-  return;
-});
+
 app.get("/biddingarea/:userName", async (req, res) => {
   const aucItem = await auctionModel.find({});
 
@@ -17,7 +14,7 @@ app.get("/biddingarea/:userName", async (req, res) => {
 });
 server.listen(3000, () => {
   connectDb(process.env.MONGO_URL);
-
+  seedAuctions();
   console.log("server is running");
 });
 const auctionItem = [
