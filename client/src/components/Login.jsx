@@ -13,7 +13,7 @@ const Login = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await getAll();
+    // await getAll();
     if (!userName.trim()) return;
     navigate(`/biddingarea/${userName}`);
   };
