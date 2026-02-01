@@ -8,7 +8,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userName.trim()) return;
-    navigate(`/biddingArea/${userName}`);
+    navigate(`/biddingarea/${userName}`);
   };
   return (
     <div className="w-full h-screen flex justify-center items-center">
