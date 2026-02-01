@@ -5,15 +5,16 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 
 import useWebsocket from "react-use-websocket";
 const BiddingArea = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const WS_URL = import.meta.env.VITE_WS_URL;
+
   const { userName } = useParams();
   const { sendJsonMessage, lastJsonMessage } = useWebsocket(
-    `ws://localhost:3000/?userName=${userName}`,
+    `${WS_URL}/?userName=${userName}`,
   );
   const [aucItems, setaucItems] = useState([]);
   const getAll = async () => {
-    const response = await fetch(
-      `http://localhost:3000/biddingarea/${userName}`,
-    );
+    const response = await fetch(`${API_URL}/biddingarea/${userName}`);
     const result = await response.json();
 
     return result.items;
