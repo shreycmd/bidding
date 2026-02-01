@@ -3,15 +3,13 @@ import { app, server } from "./Socket.js";
 import { auctionModel, connectDb } from "./db.js";
 import { seedAuctions } from "./seed.js";
 import cors from "cors";
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 configDotenv();
-
+app.get("/", (req, res) => {
+  seedAuctions();
+  return;
+});
 app.get("/biddingarea/:userName", async (req, res) => {
   const aucItem = await auctionModel.find({});
 
@@ -19,7 +17,7 @@ app.get("/biddingarea/:userName", async (req, res) => {
 });
 server.listen(3000, () => {
   connectDb(process.env.MONGO_URL);
-  seedAuctions();
+
   console.log("server is running");
 });
 const auctionItem = [
