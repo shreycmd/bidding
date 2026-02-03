@@ -53,30 +53,39 @@ wss.on("connection", async (connection, request) => {
     const { id: itemId, bid_amt } = f_data;
     const previtem = await auctionModel.findOne({ id: itemId });
     const prevowner = previtem?.highestBidder;
-    // console.log("--------prev",prevowner)
-    const result = await auctionModel.findOneAndUpdate(
-      {
-        id: itemId,
-        currentBid: { $lt: bid_amt },
-        auctionEndTime: { $gt: new Date() },
-      },
-      {
-        $set: {
-          currentBid: bid_amt,
-          highestBidder: name,
-        },
-      },
-      { new: true },
-    );
-    if (!result) {
+    if (prevowner && prevowner == name) {
       connection.send(
         JSON.stringify({
-          type: "BID_REJECTED",
-          message: "OUTBID_OR_ENDED",
+          type: "Already_Winning",
+          message: "You are alredy the highest bidder",
         }),
       );
       return;
     } else {
+      // console.log("--------prev",prevowner)
+      const result = await auctionModel.findOneAndUpdate(
+        {
+          id: itemId,
+          currentBid: { $lt: bid_amt },
+          auctionEndTime: { $gt: new Date() },
+        },
+        {
+          $set: {
+            currentBid: bid_amt,
+            highestBidder: name,
+          },
+        },
+        { new: true },
+      );
+      if (!result) {
+        connection.send(
+          JSON.stringify({
+            type: "BID_REJECTED",
+            message: "OUTBID_OR_ENDED",
+          }),
+        );
+        return;
+      }
       connection.send(
         JSON.stringify({
           type: "BID_ACCEPTED",
@@ -87,26 +96,27 @@ wss.on("connection", async (connection, request) => {
           id: result.id,
         }),
       );
-    }
 
-    Broadcast(connections, uuid, {
-      type: "BID_UPDATE",
-      id: result.id,
-      currentBid: result.currentBid,
-      highestBidder: result.highestBidder,
-    });
-    if (prevowner && prevowner != name) {
-      const con_id = Object.keys(users);
-
-      const userid = con_id.find((uid) => users[uid] === prevowner);
-
-      // console.log("----", userid);
-      const payload = JSON.stringify({
-        type: "Out_Bid",
-        message: ` No longer highest bidder for ${result.itemName} `,
-        owner_token: 0,
+      Broadcast(connections, uuid, {
+        type: "BID_UPDATE",
+        id: result.id,
+        currentBid: result.currentBid,
+        highestBidder: result.highestBidder,
       });
-      connections[userid].send(payload);
+
+      if (prevowner && prevowner != name) {
+        const con_id = Object.keys(users);
+
+        const userid = con_id.find((uid) => users[uid] === prevowner);
+
+        // console.log("----", userid);
+        const payload = JSON.stringify({
+          type: "Out_Bid",
+          message: ` No longer highest bidder for ${result.itemName} `,
+          owner_token: 0,
+        });
+        connections[userid].send(payload);
+      }
     }
   });
   connection.on("close", () => {
