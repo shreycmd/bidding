@@ -29,6 +29,13 @@ const BiddingArea = () => {
   useEffect(() => {
     if (!lastJsonMessage) return;
     const data = lastJsonMessage;
+    if (data.type == "Already_Winning") {
+      const notify = () => {
+        toast(data.message);
+      };
+      console.log("all ready winning message came");
+      notify();
+    }
     if (data.type == "BID_UPDATE") {
       setaucItems((prev) =>
         prev.map((item) =>
